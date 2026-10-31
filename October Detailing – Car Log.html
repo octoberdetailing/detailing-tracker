@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>October Detailing – Car Log</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#fff;--card:#f3f6fc;--text:#0a0a0a;--mut:#5b6678;--line:#d3dcea;--acc:#1d5fd6;--acc-t:#fff;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--card:#10131a;--text:#fff;--mut:#98a2b3;--line:#232a38;--acc:#3b82f6;--acc-t:#fff;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#000;--card:#10131a;--text:#fff;--mut:#98a2b3;--line:#232a38;--acc:#3b82f6;--acc-t:#fff;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:560px;margin:0 auto;padding:14px}
+h1{font-size:22px;margin:0 0 12px;color:var(--acc)}
+h2{margin:0 0 10px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;text-align:center}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;text-align:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.stat b{display:block;font-size:21px}.stat span{color:var(--mut);font-size:12px}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{flex:1;padding:10px 4px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;font-size:14px}
+.tabs button.on,.opt.on{background:var(--acc);color:var(--acc-t);border-color:var(--acc)}
+label{display:block;font-size:13px;color:var(--mut);margin:14px 0 5px}
+input{display:block;width:100%;min-width:0;height:48px;padding:0 12px;font-size:16px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);-webkit-appearance:none;appearance:none}
+input[type=date]{display:flex;align-items:center;justify-content:center;text-align:center;padding:0 12px}
+input[type=date]::-webkit-date-and-time-value{text-align:center;margin:0;min-height:1.2em;line-height:1.2}
+.pick{width:100%;height:48px;text-align:left;padding:0 12px;font-size:16px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text)}
+.opt{padding:11px 12px;border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:10px;font-size:15px;text-align:left}
+.lst{display:flex;flex-direction:column;gap:7px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}.chips .opt{padding:9px 12px;font-size:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.two .opt{text-align:center}
+.go{width:100%;margin-top:16px;padding:14px;border:0;border-radius:10px;background:var(--acc);color:var(--acc-t);font-size:17px;font-weight:600}
+.wh{position:relative;flex:1}
+.wh::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;margin-top:-22px;border-top:2px solid var(--acc);border-bottom:2px solid var(--acc);pointer-events:none}
+.wheel{overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;text-align:center}
+.wheel::-webkit-scrollbar{display:none}
+.wheel div{height:44px;line-height:44px;font-size:20px;scroll-snap-align:center}
+.tw{display:flex;gap:10px;align-items:center}.tw small{color:var(--mut);width:30px}
+.job{border-top:1px solid var(--line);padding:11px 0}.job:first-child{border-top:0}
+.job .top{display:flex;justify-content:space-between;gap:8px;font-weight:600}
+.job .sub{color:var(--mut);font-size:14px}
+.acts{margin-top:7px;display:flex;gap:8px}
+.acts button{padding:7px 11px;border:1px solid var(--line);background:transparent;color:var(--text);border-radius:8px;font-size:13px}
+.acts .del{color:#e5484d}
+.empty{color:var(--mut);text-align:center;padding:14px}
+#msg{color:var(--mut);font-size:13px;text-align:center;min-height:18px}
+#sheet{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:20;align-items:stretch}
+#sheetbox{background:var(--bg);width:100%;max-width:560px;margin:0 auto;border-radius:0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));height:100%;overflow-y:auto;border:0}
+.editbar{display:flex;justify-content:space-between;align-items:center;background:var(--acc);color:var(--acc-t);border-radius:10px;padding:10px 12px;margin-bottom:6px;font-weight:600}
+.editbar button{border:1px solid var(--acc-t);background:transparent;color:var(--acc-t);border-radius:8px;padding:5px 10px;font-size:13px}
+.shead{display:flex;justify-content:space-between;align-items:center}.shead button{border:0;background:none;color:var(--mut);font-size:15px}
+.rowin{display:flex;gap:8px;margin-top:12px}.rowin .opt{white-space:nowrap}
+
+[hidden]{display:none!important}
+.nav{display:flex;gap:6px;max-width:560px;margin:0 auto;padding:10px 14px 0;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg)}
+.nav button{flex:1;padding:10px 4px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;font-size:14px}
+.nav button.on{background:var(--acc);color:var(--acc-t);border-color:var(--acc)}
+.cv{text-align:center;padding-top:40px}
+.cv-brand{font-size:38px;font-weight:800;color:var(--text)}.cv-brand span{color:var(--acc)}
+.cv-tag{color:var(--mut);margin:6px 0 26px}
+.cv .go{margin-top:12px}.cv .go.alt{background:var(--card);color:var(--text);border:1px solid var(--line)}
+.cv-contact{color:var(--mut);font-size:13px;margin-top:26px}.cv-contact a{color:var(--mut)}
+#gal{--bg:#04060b;--panel:#0d1424;--line:#1c2a47;--blue:#2f7bff;--blue2:#1b5fe0;--text:#fff;--mute:#8da0c4;--acc:#2f7bff;color-scheme:dark}
+#gal{background:radial-gradient(900px 400px at 50% -120px,#0f2350 0,var(--bg) 70%) no-repeat,var(--bg);color:var(--text);font:16px/1.4 -apple-system,"Helvetica Neue",Arial,sans-serif;min-height:100vh}
+#gal .wrap{max-width:960px;margin:0 auto;padding:0 16px 40px}
+#gal header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 4px}
+#gal .brand{font-size:22px;font-weight:800;letter-spacing:.3px}#gal .brand span{color:var(--blue)}
+#gal .sub{color:var(--mute);font-size:14px;margin:0 0 14px}
+#gal button{font:inherit;border:0;border-radius:12px;padding:11px 16px;background:linear-gradient(var(--blue),var(--blue2));color:#fff;font-weight:600;cursor:pointer}
+#gal button.ghost{background:var(--panel);border:1px solid var(--line)}
+#gal button.danger{background:#3a1218;color:#ff8d9a}
+#gal button:disabled{opacity:.6}
+#gal .stats{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:14px}
+#gal .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+#gal .stat b{display:block;font-size:24px}#gal .stat span{color:var(--mute);font-size:13px}
+#gal .tools{display:flex;gap:8px;margin-bottom:14px}
+#gal .tools input,#gal .tools select{flex:1;min-width:0}
+#gal input[type=text],#gal input[type=number],#gal select,#gal textarea{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:#fff;font:inherit}
+#gal .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:700px){#gal .grid{grid-template-columns:repeat(4,1fr)}}
+#gal .card{position:relative;border:0;padding:0;background:#000;border-radius:14px;overflow:hidden;aspect-ratio:1050/1460;box-shadow:0 0 0 1px var(--line),0 8px 24px rgba(0,0,0,.45)}
+#gal .card img{width:100%;height:100%;object-fit:cover;display:block}
+#gal .cap{position:absolute;left:0;right:0;bottom:0;padding:30px 10px 10px;background:linear-gradient(transparent,rgba(0,0,0,.88));color:#fff;font-size:13px;font-weight:700;text-align:left;line-height:1.2}
+#gal .gal{font-size:28px;margin:10px 0 0;font-weight:800}
+#gal .empty{color:var(--mute);text-align:center;padding:50px 20px}
+#gal footer{color:var(--mute);font-size:13px;text-align:center;margin-top:30px}#gal footer a{color:var(--mute)}
+#gal .modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:16px;z-index:5;overflow:auto}
+#gal .modal.on{display:flex}
+#gal .sheet{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;width:100%;max-width:420px;max-height:100%;overflow:auto}
+#gal .sheet img.big{width:100%;border-radius:12px;display:block}
+#gal .name{font-size:21px;font-weight:700;margin:14px 0 2px}
+#gal .price{font-size:36px;font-weight:800;color:var(--blue)}
+#gal .by{color:var(--mute);font-size:13px}
+#gal .notes{white-space:pre-wrap;margin:12px 0 4px;padding:12px;background:var(--bg);border:1px solid var(--line);border-radius:10px;color:#dbe5ff;font-size:15px}
+#gal textarea{resize:vertical}
+#gal .row{display:flex;gap:8px;margin-top:14px}#gal .row button{flex:1}
+#gal label{display:block;color:var(--mute);font-size:14px;margin:12px 0 4px}
+#gal .err{color:#ff8d9a;font-size:14px;margin-top:8px}
+#gal .ai{margin-top:10px;font-size:14px;color:var(--mute)}#gal .ai b{color:#fff}#gal .ai button{margin-top:6px;padding:8px 12px}
+#gal #g_edwrap{display:none}
+#gal .card{margin:0}#gal #g_forline{display:none!important}#gal .cap{white-space:pre-line}#photo{height:auto;padding:10px}#gal input[type=range]{height:auto;padding:0;border:0;background:none;-webkit-appearance:auto;appearance:auto}#gal input[type=file]{height:auto;padding:8px 0;border:0;background:none;color:#fff}
+</style>
+</head>
+<body>
+<div class="nav"><button data-nav="home">Home</button><button data-nav="jobs">Job Log</button><button data-nav="cars">Gallery</button></div>
+<section id="pg_home"><div class="wrap cv">
+<div class="cv-brand">October <span>Detailing</span></div>
+<div class="cv-tag">Mobile car detailing · Eugene / Springfield, OR</div>
+<div class="card"><div class="g3" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div class="stat"><b id="hn">0</b><span>cars done</span></div><div class="stat"><b id="ht">$0</b><span>total made</span></div></div></div>
+<button class="go" data-nav="jobs">Job Log</button>
+<button class="go alt" data-nav="cars">Vehicle Gallery</button>
+<div class="cv-contact"><a href="tel:5412236444">541-223-6444</a> · <a href="mailto:octoberdetailing@gmail.com">octoberdetailing@gmail.com</a><br>octoberdetailing.com</div>
+</div></section>
+<section id="pg_jobs" hidden>
+<div class="wrap">
+<h1>October Detailing</h1>
+<div class="tabs" id="tabs"></div>
+<div class="card">
+  <div class="g3">
+    <div class="stat"><b id="n">0</b><span>cars done</span></div>
+    <div class="stat"><b id="tot">$0</b><span>total made</span></div>
+    <div class="stat"><b id="tt">0h</b><span>total time</span></div>
+  </div>
+  <div class="g2">
+    <div class="stat"><b id="cash">$0</b><span>cash</span></div>
+    <div class="stat"><b id="card">$0</b><span>card</span></div>
+  </div>
+  <div class="g2">
+    <div class="stat"><b id="taxc">$0</b><span>tax on cash</span></div>
+    <div class="stat"><b id="taxd">$0</b><span>tax on card</span></div>
+  </div>
+  <div class="g2" style="grid-template-columns:1fr">
+    <div class="stat"><b id="taxt" style="color:var(--acc)">$0</b><span>total tax to set aside</span></div>
+  </div>
+  <div class="tw" style="margin-top:12px"><small style="width:auto">Tax rate</small><input id="rate" inputmode="decimal" style="width:90px;height:40px"><small>%</small></div>
+</div>
+<div class="card" id="formcard">
+  <div id="editbar"></div>
+  <label style="margin-top:0">Date</label><input type="date" id="date">
+  <label>Customer name</label><input id="cust" placeholder="Name">
+  <label>Year / make / model</label><button class="pick" id="carbtn" data-a="car">Tap to choose</button>
+  <label>Service done</label><div class="lst" id="svcs"></div>
+  <label>Add-ons (optional)</label><div class="chips" id="adds"></div>
+  <label>Price paid ($)</label><input id="price" inputmode="decimal" placeholder="150">
+  <label>Paid with</label><div class="two" id="pays"></div>
+  <label>Time it took</label>
+  <div class="tw"><small>hrs</small><input id="wh" type="number" inputmode="numeric" min="0" max="24" placeholder="0" style="flex:1;min-width:0"><small>min</small><input id="wm" type="number" inputmode="numeric" min="0" max="59" placeholder="0" style="flex:1;min-width:0"></div>
+  <label>Photo (optional, goes in the Gallery)</label><input type="file" id="photo" accept="image/*">
+  <button class="go" id="add">Add job</button>
+</div>
+<div class="card" id="list"></div>
+<div id="msg"></div>
+</div>
+</section>
+<section id="pg_cars" hidden><div id="gal"><div class="wrap">
+<header><div class="brand">October <span>Detailing</span></div><button id="g_add" hidden>Add car</button></header>
+<h1 class="gal">Vehicle Gallery</h1>
+<p class="sub" id="g_forline"></p>
+<div class="stats"><div class="stat"><b id="g_sCars">0</b><span>Cars detailed</span></div></div>
+<div class="tools"><input type="text" id="g_q" placeholder="Search cars"><select id="g_sort"><option value="new">Newest</option><option value="old">Oldest</option><option value="hi">Price: high to low</option><option value="lo">Price: low to high</option><option value="az">Name A–Z</option></select></div>
+<div class="tools"><select id="g_cf"><option value="">All customers</option></select><button id="g_pdf" class="ghost" type="button">PDF</button></div>
+<div class="grid" id="g_grid"></div>
+<div class="empty" id="g_empty" hidden></div>
+<footer>October Detailing · Eugene/Springfield, OR · <a href="tel:5412236444">541-223-6444</a> · <a href="mailto:octoberdetailing@gmail.com">octoberdetailing@gmail.com</a></footer>
+</div>
+
+<div class="modal" id="g_view"><div class="sheet" id="g_viewBody"></div></div>
+<div class="modal" id="g_form"><div class="sheet">
+  <b id="g_ftitle">Add a car</b>
+  <label id="g_flabel">Photo or CarDex screenshot</label>
+  <input type="file" id="g_file" accept="image/*">
+  <div class="ai" id="g_ai"></div>
+  <div id="g_edwrap">
+    <canvas id="g_ed" width="300" height="417" style="width:100%;max-width:300px;display:block;margin:12px auto 0;border-radius:12px;background:#000;touch-action:none"></canvas>
+    <input type="range" id="g_zoom" min="0.2" max="4" step="0.01" value="1" style="width:100%;margin-top:10px">
+    <div class="row"><button id="g_center" type="button">Center the car</button></div>
+    <div class="row"><button class="ghost" id="g_fill" type="button">Fill frame</button><button class="ghost" id="g_fit" type="button">Fit whole photo</button><button class="ghost" id="g_cardbtn" type="button">CarDex card</button></div>
+    <div class="ai">Drag the photo to move it. Use the slider to zoom.</div>
+  </div>
+  <label>Year (optional)</label><input type="text" id="g_vyear" placeholder="2003">
+  <label>Make and model</label><input type="text" id="g_vname" placeholder="Honda Accord">
+  <label>Customer / business</label><input type="text" id="g_vclient" list="g_clients" placeholder="541 Automotive"><datalist id="g_clients"></datalist>
+  <label>Price ($)</label><input type="number" id="g_vprice" inputmode="decimal" placeholder="150">
+  <label>What was done (optional)</label><textarea id="g_vnotes" rows="3" placeholder="Trim restoration, ..."></textarea>
+  <div class="err" id="g_err"></div>
+  <div class="row"><button class="ghost" id="g_cancel" type="button">Cancel</button><button id="g_save" type="button">Save</button></div>
+</div></div>
+
+</div></section>
+<div id="sheet"><div id="sheetbox"></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+// ---- pure logic ----
+function pad(x){return String(x).padStart(2,'0')}
+function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function rangeStart(f,now){
+  if(f==='all')return '';
+  if(f==='month')return now.getFullYear()+'-'+pad(now.getMonth()+1)+'-01';
+  var d=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  d.setDate(d.getDate()-((d.getDay()+6)%7));
+  return iso(d);
+}
+function filterJobs(jobs,f,now){var s=rangeStart(f,now);return jobs.filter(function(j){return !s||j.date>=s}).sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:b.id-a.id})}
+function sum(jobs,pay){return jobs.reduce(function(t,j){return t+((!pay||j.pay===pay)?j.price:0)},0)}
+function mins(jobs){return jobs.reduce(function(t,j){return t+(j.mins||0)},0)}
+function fmtT(m){var h=Math.floor(m/60),r=m%60;return h&&r?h+'h '+r+'m':h?h+'h':r+'m'}
+function money(v){return '$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function parsePrice(s){var v=parseFloat(String(s).replace(/[$,\s]/g,''));return isFinite(v)&&v>=0?Math.round(v*100)/100:null}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function niceDate(s){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}
+// ---- end pure logic ----
+var M={};
+('Acura:ILX,Integra,MDX,RDX,TLX,TSX,RSX,TL,RL,NSX|Alfa Romeo:Giulia,Stelvio,4C|Audi:A3,A4,A5,A6,A8,Q3,Q5,Q7,Q8,TT,e-tron|BMW:3 Series,5 Series,7 Series,X1,X3,X5,X6,M3,M5,Z4|Buick:Enclave,Encore,Envision,LaCrosse,Regal,LeSabre|Cadillac:ATS,CTS,CT5,Escalade,XT5,SRX,DeVille|Chevrolet:Silverado,Malibu,Equinox,Tahoe,Suburban,Camaro,Corvette,Impala,Cruze,Traverse,Colorado,Blazer,Trax|Chrysler:300,Pacifica,Town & Country,Sebring|Dodge:Charger,Challenger,Durango,Grand Caravan,Dakota,Journey,Neon|Ford:F-150,F-250,Mustang,Explorer,Escape,Edge,Bronco,Ranger,Fusion,Focus,Expedition,Fiesta,Taurus|GMC:Sierra,Yukon,Acadia,Terrain,Canyon,Envoy|Honda:Civic,Accord,CR-V,Pilot,Odyssey,HR-V,Fit,Ridgeline,Passport,Element,Prelude,S2000|Hyundai:Elantra,Sonata,Tucson,Santa Fe,Kona,Palisade,Accent,Veloster|Infiniti:Q50,Q60,QX50,QX60,QX80,G35,G37,FX35|Jeep:Wrangler,Grand Cherokee,Cherokee,Compass,Renegade,Gladiator,Liberty|Kia:Soul,Sportage,Sorento,Optima,Forte,Telluride,Sedona,Rio,Stinger|Lexus:IS,ES,GS,LS,RX,NX,GX,LX,RC|Lincoln:Navigator,Aviator,MKZ,MKX,Town Car,Corsair|Mazda:Mazda3,Mazda6,CX-5,CX-9,CX-30,Miata,RX-8|Mercedes-Benz:C-Class,E-Class,S-Class,GLC,GLE,A-Class,CLA,G-Class|Mini:Cooper,Countryman,Clubman|Mitsubishi:Lancer,Outlander,Eclipse,Mirage|Nissan:Altima,Sentra,Maxima,Rogue,Pathfinder,Frontier,Titan,370Z,350Z,Murano,Versa,Armada|Porsche:911,Cayenne,Macan,Panamera,Boxster,Cayman|Ram:1500,2500,3500|Subaru:Outback,Forester,Crosstrek,Impreza,WRX,Legacy,Ascent,BRZ|Tesla:Model 3,Model S,Model X,Model Y|Toyota:Camry,Corolla,RAV4,Tacoma,Tundra,4Runner,Highlander,Prius,Sienna,Avalon,Supra,Land Cruiser,Sequoia,Celica,MR2|Volkswagen:Jetta,Golf,Passat,Tiguan,Atlas,Beetle,GTI|Volvo:XC90,XC60,XC40,S60,S90,V60').split('|').forEach(function(s){var p=s.split(':');M[p[0]]=p[1].split(',')});
+var SV=['Full detail (interior + exterior)','Exterior only','Interior only','Fleet detail (interior/exterior)','Paint correction (1 step)'];
+var AD=['Pet hair removal','Headlight restoration','Shampoo','Clay bar','Trim restoration'];
+var RATE=25,RK='octoberCarLogRate',KEY='octoberCarLog',jobs=[],filter='week',S={car:'',svc:'',adds:[],pay:''},ST={},EDIT=null;
+function svList(){return SV.concat(S.svc&&SV.indexOf(S.svc)<0?[S.svc]:[])}
+function $(i){return document.getElementById(i)}
+var SEED=[['2026-10-30','Franando','Acura ILX',3,'cash',300,150],['2026-10-30','franando','Jeep Wrangler',3,'cash',300,150],['2026-10-23','franando','Honda Pilot',3,'cash',300,200],['2026-10-23','franando','Cadillac Escalade',3,'cash',300,170],['2026-10-21','franando','BMW',3,'cash',300,150],['2026-10-21','franando','Honda Accord',0,'cash',300,150],['2026-10-15','franando','Honda Accord',3,'card',300,150],['2026-10-13','franando','Mazda',3,'card',240,175],['2026-10-12','franando','Honda',3,'cash',240,150],['2026-10-12','franando','Acura TLX',3,'card',240,150],['2026-10-04','Franando','Subaru WRX',3,'card',300,150],['2026-10-02','Franando','Jeep Cherokee',3,'card',300,175],['2026-10-02','franando','Honda Pilot',3,'card',300,200],['2026-10-02','franando','Honda Accord',3,'card',300,125]];
+function load(){try{var r=localStorage.getItem(KEY);jobs=r?JSON.parse(r):[];if(!Array.isArray(jobs))jobs=[]}catch(e){jobs=[]}
+  try{if(!localStorage.getItem('octoberCarLogSeed1')){SEED.forEach(function(s,i){jobs.push({id:1700000000000+(SEED.length-i),date:s[0],cust:s[1],car:s[2],svc:SV[s[3]],sv:SV[s[3]],ad:[],price:s[6],pay:s[4],mins:s[5]})});localStorage.setItem('octoberCarLogSeed1','1');save()}}catch(e){}
+  var ch=0;jobs.forEach(function(j){if(/^franando$/i.test(String(j.cust).trim())){j.cust='541 Automotive';ch=1}});if(ch)save()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(jobs))}catch(e){say('Could not save on this device.')}}
+function say(t){$('msg').textContent=t;setTimeout(function(){if($('msg').textContent===t)$('msg').textContent=''},3500)}
+function wheelFill(id,items,rows){var el=$(id);el.style.height=(44*rows)+'px';el.style.padding=(44*(rows-1)/2)+'px 0';el.innerHTML=items.map(function(i){return '<div>'+i+'</div>'}).join('');el.scrollTop=0}
+function wval(id){return Math.round($(id).scrollTop/44)}
+function nums(a,b){var r=[];for(var i=a;i<=b;i++)r.push(i);return r}
+function formUI(){
+  $('svcs').innerHTML=svList().map(function(s,i){return '<button class="opt'+(S.svc===s?' on':'')+'" data-s="'+i+'">'+esc(s)+'</button>'}).join('');
+  $('adds').innerHTML=AD.map(function(s,i){return '<button class="opt'+(S.adds.indexOf(s)>-1?' on':'')+'" data-ad="'+i+'">'+esc(s)+'</button>'}).join('');
+  $('pays').innerHTML=['cash','card'].map(function(p){return '<button class="opt'+(S.pay===p?' on':'')+'" data-p="'+p+'">'+p.charAt(0).toUpperCase()+p.slice(1)+'</button>'}).join('');
+  $('carbtn').textContent=S.car||'Tap to choose';
+  $('editbar').innerHTML=EDIT?'<div class="editbar"><span>Editing a job</span><button data-a="cancelEdit">Cancel</button></div>':'';
+  $('add').textContent=EDIT?'Save changes':'Add job';
+}
+function render(){
+  var tabs=[['week','This week'],['month','This month'],['all','All time']];
+  $('tabs').innerHTML=tabs.map(function(t){return '<button data-f="'+t[0]+'" class="'+(filter===t[0]?'on':'')+'">'+t[1]+'</button>'}).join('');
+  var v=filterJobs(jobs,filter,new Date());
+  $('n').textContent=v.length;$('tot').textContent=money(sum(v));$('tt').textContent=fmtT(mins(v));
+  $('cash').textContent=money(sum(v,'cash'));$('card').textContent=money(sum(v,'card'));
+  var tc=Math.round(sum(v,'cash')*RATE)/100,td=Math.round(sum(v,'card')*RATE)/100;
+  $('taxc').textContent=money(tc);$('taxd').textContent=money(td);$('taxt').textContent=money(tc+td);$('hn').textContent=jobs.length;$('ht').textContent=money(sum(jobs));
+  $('list').innerHTML=v.length?v.map(function(j){
+    var meta=[j.pay?j.pay.charAt(0).toUpperCase()+j.pay.slice(1):'',j.mins!=null?fmtT(j.mins):''].filter(Boolean).join(' · ');
+    return '<div class="job"><div class="top"><span>'+esc(j.car)+'</span><span>'+money(j.price)+'</span></div>'+
+    '<div class="sub">'+esc(niceDate(j.date))+' · '+esc(j.cust)+'</div><div class="sub">'+esc(j.svc)+'</div>'+(meta?'<div class="sub">'+esc(meta)+'</div>':'')+
+    '<div class="acts"><button data-e="'+j.id+'">Edit</button><button data-r="'+j.id+'">PDF receipt</button><button class="del" data-d="'+j.id+'">Delete</button></div></div>'
+  }).join(''):'<div class="empty">No jobs in this range yet.</div>';
+}
+function sheet(){
+  var b=$('sheetbox'),h='<div class="shead"><h2>',x='<button data-a="close">Cancel</button></div>';
+  if(ST.step==='year'){b.innerHTML=h+'Year</h2>'+x+'<div class="wh"><div class="wheel" id="wy"></div></div><button class="go" data-a="yearNext">Next</button><button class="opt" style="width:100%;margin-top:10px;text-align:center" data-a="skipYear">Skip year</button>';wheelFill('wy',nums(0,66).map(function(i){return 2026-i}),5)}
+  else if(ST.step==='make'){b.innerHTML=h+'Make</h2>'+x+'<div class="lst">'+Object.keys(M).map(function(m){return '<button class="opt" data-make="'+esc(m)+'">'+esc(m)+'</button>'}).join('')+'</div><div class="rowin"><input id="tx" placeholder="Not listed? Type make"><button class="opt" data-a="useMake">Next</button></div>'}
+  else{b.innerHTML=h+esc(ST.make)+' model</h2>'+x+'<div class="lst">'+(M[ST.make]||[]).map(function(m){return '<button class="opt" data-model="'+esc(m)+'">'+esc(m)+'</button>'}).join('')+'</div><div class="rowin"><input id="tx" placeholder="Not listed? Type model"><button class="opt" data-a="useModel">Use</button></div><button class="go" data-a="skip">Skip model</button>'}
+  $('sheet').style.display='flex';b.scrollTop=0;
+}
+function finishCar(model){S.car=(ST.year?ST.year+' ':'')+ST.make+(model?' '+model:'');$('sheet').style.display='none';formUI()}
+function deliver(blob,name){
+  var file=null;try{file=new File([blob],name,{type:'application/pdf'})}catch(e){}
+  function save(){
+    if(!window.claude){var u=URL.createObjectURL(blob),l=document.createElement('a');l.href=u;l.download=name;document.body.appendChild(l);l.click();l.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000);say('PDF ready.');return}
+    window.claude.use('downloads').then(function(d){
+      if(!d){say('Saving files is not available in this view.');return}
+      d.save({filename:name,data:blob}).then(function(){say('PDF saved.')},function(e){if(!e||e.code!=='declined')say('Could not save the PDF.')});
+    });
+  }
+  if(file&&navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:name}).catch(function(e){if(!e||e.name!=='AbortError')save()})}
+  else save();
+}
+window.deliverFile=deliver;
+window.jobDelete=function(id){jobs=jobs.filter(function(x){return x.id!==id});save();render()};
+function receipt(j){
+  if(!window.jspdf){say('PDF tool did not load. Check your connection.');return}
+  var doc=new window.jspdf.jsPDF({unit:'pt',format:'letter'}),W=612,y=70;
+  doc.setFont('helvetica','bold');doc.setFontSize(26);doc.text('October Detailing',50,y);
+  doc.setFont('helvetica','normal');doc.setFontSize(11);doc.setTextColor(110);
+  doc.text('541-223-6444  |  octoberdetailing@gmail.com  |  octoberdetailing.com',50,y+20);
+  doc.setDrawColor(200);doc.line(50,y+34,W-50,y+34);
+  doc.setTextColor(0);doc.setFont('helvetica','bold');doc.setFontSize(18);doc.text('RECEIPT',50,y+66);
+  y+=100;
+  [['Date',niceDate(j.date)],['Customer',j.cust],['Vehicle',j.car],['Job description',j.svc]].forEach(function(r){
+    doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(110);doc.text(r[0].toUpperCase(),50,y);
+    doc.setFont('helvetica','normal');doc.setFontSize(13);doc.setTextColor(0);
+    var lines=doc.splitTextToSize(r[1],W-100);doc.text(lines,50,y+17);y+=17+lines.length*16+14;
+  });
+  doc.line(50,y,W-50,y);y+=34;
+  doc.setFont('helvetica','bold');doc.setFontSize(14);doc.text('Amount paid',50,y);
+  doc.setFontSize(20);doc.text(money(j.price),W-50,y,{align:'right'});
+  doc.setFont('helvetica','normal');doc.setFontSize(12);doc.setTextColor(110);
+  doc.text('Thank you for your business!',50,y+50);
+  var name='Receipt-'+j.date+'-'+j.cust.replace(/[^a-z0-9]+/gi,'_')+'.pdf',blob=doc.output('blob');
+  deliver(blob,name);
+}
+function resetForm(){EDIT=null;$('cust').value='';$('price').value='';S={car:'',svc:'',adds:[],pay:''};$('wh').value='';$('wm').value='';formUI()}
+function startEdit(j){
+  EDIT=j.id;$('date').value=j.date;$('cust').value=j.cust;$('price').value=j.price;
+  var base=j.sv||j.svc,rest=j.ad;
+  if(!j.sv){var m0=SV.filter(function(s){return j.svc.indexOf(s)===0})[0],i=j.svc.indexOf(' + ');
+    if(m0){base=m0;rest=j.svc.slice(m0.length).replace(/^ \+ /,'').split(', ')}
+    else{base=i>-1?j.svc.slice(0,i):j.svc;rest=i>-1?j.svc.slice(i+3).split(', '):[]}}
+  S={car:j.car,svc:base,adds:(rest||[]).filter(function(a){return AD.indexOf(a)>-1}),pay:j.pay||''};
+  var m=j.mins||0;$('wh').value=Math.floor(m/60)||'';$('wm').value=(m%60)||'';
+  formUI();$('formcard').scrollIntoView({behavior:'smooth'});
+}
+document.addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;var D=b.dataset;
+  if(D.f){filter=D.f;render()}
+  else if(D.r){var j=jobs.filter(function(x){return String(x.id)===D.r})[0];if(j)receipt(j)}
+  else if(D.d){
+    if(!b.dataset.sure){b.dataset.sure='1';b.textContent='Tap again to delete';setTimeout(function(){if(document.body.contains(b)){delete b.dataset.sure;b.textContent='Delete'}},4000)}
+    else{var gone=jobs.filter(function(x){return String(x.id)===D.d})[0];jobs=jobs.filter(function(x){return String(x.id)!==D.d});save();render();if(gone&&window.galDelete)window.galDelete(gone.id);say('Job deleted.')}
+  }
+  else if(D.e){var q=jobs.filter(function(x){return String(x.id)===D.e})[0];if(q)startEdit(q)}
+  else if(D.a==='cancelEdit'){resetForm()}
+  else if(D.s!==undefined){S.svc=svList()[+D.s];formUI()}
+  else if(D.ad!==undefined){var a=AD[+D.ad],i=S.adds.indexOf(a);if(i>-1)S.adds.splice(i,1);else S.adds.push(a);formUI()}
+  else if(D.p){S.pay=D.p;formUI()}
+  else if(D.a==='car'){ST={step:'year'};sheet()}
+  else if(D.a==='close'){$('sheet').style.display='none'}
+  else if(D.a==='yearNext'){ST.year=2026-wval('wy');ST.step='make';sheet()}
+  else if(D.a==='skipYear'){ST.year='';ST.step='make';sheet()}
+  else if(D.make){ST.make=D.make;ST.step='model';sheet()}
+  else if(D.a==='useMake'){var t=$('tx').value.trim();if(t){ST.make=t;ST.step='model';sheet()}}
+  else if(D.model){finishCar(D.model)}
+  else if(D.a==='useModel'){var m=$('tx').value.trim();if(m)finishCar(m)}
+  else if(D.a==='skip'){finishCar('')}
+});
+$('add').onclick=function(){
+  var p=parsePrice($('price').value),c=$('cust').value.trim(),d=$('date').value;
+  if(!d||!c||!S.car||!S.svc||!S.pay||p===null){say('Fill in date, customer, vehicle, service, price and cash/card.');return}
+  var desc=S.svc+(S.adds.length?' + '+S.adds.join(', '):'');
+  var job={id:EDIT||Date.now(),date:d,cust:c,car:S.car,svc:desc,sv:S.svc,ad:S.adds.slice(),price:p,pay:S.pay,mins:(parseInt($('wh').value,10)||0)*60+(parseInt($('wm').value,10)||0)},was=EDIT;
+  if(was){jobs=jobs.map(function(x){return x.id===was?job:x})}else jobs.push(job);
+  var pf=$('photo').files[0];save();resetForm();render();$('photo').value='';say(was?'Changes saved.':'Job added.');
+  if(window.galSync&&(pf||was)){if(pf)say('Saving photo to the Gallery...');window.galSync(job,pf||null).then(function(r){if(r==='ok')say((was?'Changes saved':'Job added')+' and Gallery updated.')},function(){say('Job saved, but the Gallery photo failed.')})}
+};
+$('date').value=iso(new Date());
+
+try{var rr=parseFloat(localStorage.getItem(RK));if(rr>=0&&rr<=100)RATE=rr}catch(e){}
+$('rate').value=RATE;
+$('rate').onchange=function(){var x=parseFloat($('rate').value);if(!(x>=0&&x<=100)){$('rate').value=RATE;return}RATE=x;try{localStorage.setItem(RK,String(RATE))}catch(e){}render()};
+load();formUI();render();
+
+function go(p){['home','jobs','cars'].forEach(function(x){$('pg_'+x).hidden=x!==p});
+  document.querySelectorAll('.nav button').forEach(function(b){b.classList.toggle('on',b.dataset.nav===p)});window.scrollTo(0,0)}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-nav]');if(b)go(b.dataset.nav)});
+go('home');
+</script>
+<script>
+(function(){
+
+const $=id=>document.getElementById(id);
+let cars=[],db=null,assets=null,sampleFn=null,canEdit=false,editing=null,client="";
+const money=n=>"$"+Number(n||0).toLocaleString(undefined,{maximumFractionDigits:2});
+const label=c=>[c.year,c.name].filter(Boolean).join(" ");
+function renderFor(){const el=$("g_forline");el.hidden=!client&&!canEdit;el.textContent=client?"for "+client:"Tap to add the business name";el.style.cursor=canEdit?"pointer":"default"}
+function editClient(){const el=$("g_forline"),i=document.createElement("input");i.type="text";i.value=client;i.placeholder="Business name";el.replaceChildren(i);i.focus();let done=false;
+  const fin=async()=>{if(done)return;done=true;try{await db.doc("settings/album").set({client:i.value.trim()})}catch(e){}renderFor()};
+  i.onblur=fin;i.onkeydown=e=>{if(e.key==="Enter")i.blur()}}
+$("g_forline").onclick=()=>{if(canEdit&&!$("g_forline").querySelector("input"))editClient()};
+function list(){
+  const q=$("g_q").value.trim().toLowerCase(),s=$("g_sort").value,cf=$("g_cf").value;
+  let l=cars.filter(c=>(!q||label(c).toLowerCase().includes(q))&&(!cf||(c.client||"")===cf));
+  const dk=c=>c.date||"",f={new:(a,b)=>dk(b).localeCompare(dk(a))||b.created-a.created,old:(a,b)=>dk(a).localeCompare(dk(b))||a.created-b.created,hi:(a,b)=>b.price-a.price,lo:(a,b)=>a.price-b.price,az:(a,b)=>label(a).localeCompare(label(b))}[s];
+  return l.sort(f);
+}
+function render(){
+  fillCf();const l=list();$("g_grid").innerHTML="";
+  $("g_sCars").textContent=cars.length;
+  $("g_empty").hidden=l.length>0;
+  if(!l.length)$("g_empty").textContent=cars.length?"No cars match that search.":(canEdit?"No cars yet. Tap Add car to start.":"No cars yet.");
+  l.forEach(c=>{const b=document.createElement("button");b.className="card";b.setAttribute("aria-label",label(c));
+    const i=document.createElement("img");i.src="/_blob/"+c.img;i.alt=label(c);i.loading="lazy";const cp=document.createElement("div");cp.className="cap";cp.textContent=c.name+(c.date?"\n"+nd(c.date):"")+(c.client?"\n"+c.client:"");b.append(i,cp);b.onclick=()=>openCar(c);$("g_grid").appendChild(b)});
+}
+$("g_q").oninput=render;$("g_sort").onchange=render;$("g_cf").onchange=render;$("g_pdf").onclick=()=>makePdf();
+function openCar(c){
+  const v=$("g_viewBody");v.innerHTML="";
+  const i=document.createElement("img");i.className="big";i.src="/_blob/"+(c.full||c.img);i.alt=label(c);
+  const n=document.createElement("div");n.className="name";n.textContent=label(c);
+  const p=document.createElement("div");p.className="price";p.textContent=money(c.price);
+  const by=document.createElement("div");by.className="by";by.textContent=(c.client?c.client+" · ":"")+(c.date?nd(c.date)+" · ":"")+"Detailed by October Detailing";
+  const er=document.createElement("div");er.className="err";
+  const nt=document.createElement("div");nt.className="notes";nt.textContent=c.notes||"";v.append(i,n,p);if(c.notes)v.append(nt);v.append(by,er);
+  const r=document.createElement("div");r.className="row";
+  if(canEdit){
+    const e=document.createElement("button");e.className="ghost";e.textContent="Edit";e.onclick=()=>{$("g_view").classList.remove("on");openForm(c)};
+    const d=document.createElement("button");d.className="danger";d.textContent="Delete";
+    d.onclick=async()=>{
+      if(!d.dataset.sure){d.dataset.sure=1;d.textContent="Tap again to delete";return}
+      d.disabled=true;d.textContent="Deleting…";er.textContent="";
+      try{await db.collection("cars").doc(c.id).delete();if(c.jobId&&window.jobDelete)window.jobDelete(c.jobId);$("g_view").classList.remove("on")}
+      catch(x){d.disabled=false;delete d.dataset.sure;d.textContent="Delete";er.textContent="Couldn’t delete: "+((x&&(x.message||x.code))||"unknown error")}
+    };
+    r.append(e,d);
+  }
+  const x=document.createElement("button");x.className="ghost";x.textContent="Close";x.onclick=()=>$("g_view").classList.remove("on");r.appendChild(x);
+  v.appendChild(r);$("g_view").classList.add("on");
+}
+$("g_view").onclick=e=>{if(e.target===$("g_view"))$("g_view").classList.remove("on")};
+
+/* ---------- add / edit ---------- */
+function openForm(c){
+  editing=c||null;im=null;$("g_file").value="";$("g_ai").textContent="";$("g_edwrap").style.display="none";$("g_err").textContent="";
+  $("g_ftitle").textContent=c?"Edit car":"Add a car";
+  $("g_flabel").textContent=c?"New photo (optional, leave empty to keep the current one)":"";$("g_flabel").style.display=c?"block":"none";
+  $("g_vname").value=c?c.name:"";$("g_vclient").value=c?(c.client||""):$("g_cf").value;$("g_vyear").value=c&&c.year?c.year:"";$("g_vnotes").value=c&&c.notes?c.notes:"";$("g_vprice").value=c?c.price:"";
+  $("g_form").classList.add("on");
+}
+$("g_add").onclick=()=>openForm(null);
+$("g_cancel").onclick=()=>$("g_form").classList.remove("on");
+
+const W=300,H=417,ed=$("g_ed"),ctx=ed.getContext("2d");
+let im=null,z=1,cx=W/2,cy=H/2,box=null,isShot=false;
+function loadImg(f){return new Promise((res,rej)=>{const u=URL.createObjectURL(f),i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=u})}
+const cover=()=>Math.max(W/im.width,H/im.height);
+function draw(c,k){c.fillStyle="#04060b";c.fillRect(0,0,W*k,H*k);if(!im)return;const s=cover()*z*k;c.drawImage(im,cx*k-im.width*s/2,cy*k-im.height*s/2,im.width*s,im.height*s)}
+function redraw(){draw(ctx,1);$("g_zoom").value=z}
+function setFill(){z=1;cx=W/2;cy=H/2;redraw()}
+function setFit(){z=Math.min(W/im.width,H/im.height)/cover();cx=W/2;cy=H/2;redraw()}
+function setCard(){const s=W/(im.width*1050/1170);z=s/cover();cx=-(60/1170)*im.width*s+im.width*s/2;cy=-(385/2532)*im.height*s+im.height*s/2;redraw()}
+// Centers the car and fills the frame like a CarDex card (car ~90% of the width, a bit below the middle)
+function autoFrame(){if(!im||!box)return;const[x1,y1,x2,y2]=box,cw=(x2-x1)*im.width;
+  let s=Math.max(.9*W/cw,cover());s=Math.min(s,4*cover());z=s/cover();
+  const ccx=(x1+x2)/2*im.width,ccy=(y1+y2)/2*im.height,iw=im.width*s,ih=im.height*s;
+  cx=W/2-(ccx-im.width/2)*s;cy=H*.55-(ccy-im.height/2)*s;
+  cx=Math.min(iw/2,Math.max(W-iw/2,cx));cy=Math.min(ih/2,Math.max(H-ih/2,cy));redraw()}
+function trim(i){
+  const t=document.createElement("canvas");t.width=40;t.height=i.height;const y=t.getContext("2d");y.drawImage(i,0,0,40,i.height);const d=y.getImageData(0,0,40,i.height).data;
+  const dark=r=>{let s=0;for(let p=0;p<40;p++){const k=(r*40+p)*4;s+=d[k]+d[k+1]+d[k+2]}return s/120<14};
+  let a=0,b=i.height-1;while(a<b&&dark(a))a++;while(b>a&&dark(b))b--;
+  if(a+(i.height-1-b)<i.height*.03)return i;
+  const o=document.createElement("canvas");o.width=i.width;o.height=b-a+1;o.getContext("2d").drawImage(i,0,a,i.width,b-a+1,0,0,i.width,b-a+1);return o}
+async function ident(){
+  const el=$("g_ai");el.textContent="";if(!im||!sampleFn)return;el.textContent="Identifying the car…";
+  try{
+    const c=document.createElement("canvas"),k=Math.min(1,800/Math.max(im.width,im.height));c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+    const b=await new Promise(r=>c.toBlob(r,"image/jpeg",.8));
+    const r=await sampleFn("What car is in this photo? Reply in exactly two lines:\nMODEL: <make and model only, like Honda Accord, no year or generation>\nYEARS: <generation or year range>\nBOX: <x1,y1,x2,y2 box around the whole car as fractions from 0 to 1 of the image width and height>\nIf it is a CarDex card screenshot, use the name on the card. If you can’t tell, reply UNKNOWN.",{images:[b],modelTier:"quick"});
+    const tx=r.text||"",mm=/MODEL:\s*(.+)/i.exec(tx),yy=/YEARS:\s*(.+)/i.exec(tx);const t=mm?mm[1].trim():"",yrs=yy?yy[1].trim():"";
+    const bm=/BOX:\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/i.exec(tx);
+    if(bm){const bb=bm.slice(1,5).map(Number);if(bb.every(v=>v>=0&&v<=1)&&bb[2]-bb[0]>.1&&bb[3]-bb[1]>.05){box=bb;if(!isShot)autoFrame()}}
+    if(!t||/UNKNOWN/i.test(t)){el.textContent="Couldn’t tell what car this is.";return}
+    el.textContent="";el.append("AI thinks this is: ");const s=document.createElement("b");s.textContent=t;el.append(s);if(yrs)el.append(" · built "+yrs+" (goes in the Year box, change it if you know the exact year)");
+    const u=document.createElement("button");u.className="ghost";u.type="button";u.textContent=$("g_vname").value.trim()?"Change to this":"Use this";u.onclick=()=>{$("g_vname").value=t;if(yrs&&!$("g_vyear").value.trim())$("g_vyear").value=yrs;u.remove()};el.append(document.createElement("br"),u);
+  }catch(e){el.textContent=""}
+}
+$("g_file").onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{const i=await loadImg(f);const t=trim(i);const shot=t===i&&Math.abs(i.height/i.width-2532/1170)<.03;
+    im=t;box=null;isShot=shot;$("g_edwrap").style.display="block";shot?setCard():setFill();ident()}
+  catch(x){$("g_err").textContent="Couldn’t open that image."}
+};
+$("g_fill").onclick=()=>im&&setFill();$("g_center").onclick=()=>{if(!im)return;box?autoFrame():ident()};$("g_fit").onclick=()=>im&&setFit();$("g_cardbtn").onclick=()=>im&&setCard();
+$("g_zoom").oninput=e=>{if(!im)return;z=parseFloat(e.target.value);redraw()};
+let drag=null;
+ed.onpointerdown=e=>{drag={x:e.clientX,y:e.clientY};ed.setPointerCapture(e.pointerId)};
+ed.onpointermove=e=>{if(!drag||!im)return;const k=W/ed.clientWidth;cx+=(e.clientX-drag.x)*k;cy+=(e.clientY-drag.y)*k;drag={x:e.clientX,y:e.clientY};redraw()};
+ed.onpointerup=ed.onpointercancel=()=>{drag=null};
+function exportBlob(){const c=document.createElement("canvas");c.width=W*2;c.height=H*2;draw(c.getContext("2d"),2);return new Promise(r=>c.toBlob(r,"image/jpeg",.9))}
+function fullBlob(){const k=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);return new Promise(r=>c.toBlob(r,"image/jpeg",.88))}
+
+$("g_save").onclick=async()=>{
+  const client=$("g_vclient").value.trim(),name=$("g_vname").value.trim(),year=$("g_vyear").value.trim(),notes=$("g_vnotes").value.trim(),price=parseFloat($("g_vprice").value);
+  if(!name||isNaN(price)||(!editing&&!im)){$("g_err").textContent=editing?"Add a vehicle name and a price.":"Add a photo, a vehicle name and a price.";return}
+  $("g_save").disabled=true;$("g_save").textContent="Saving…";$("g_err").textContent="";
+  try{
+    let img=editing?editing.img:null,full=editing&&editing.full?editing.full:null;
+    if(im){const a=await assets.upload(await exportBlob());img=a.id;const fa=await assets.upload(await fullBlob());full=fa.id}
+    if(editing)await db.collection("cars").doc(editing.id).update({name,year,price,notes,img,full,client});
+    else await db.collection("cars").add({name,year,price,notes,img,full,client,created:Date.now()});
+    $("g_form").classList.remove("on");
+  }catch(e){$("g_err").textContent="Couldn’t save: "+((e&&(e.message||e.code))||"unknown error")}
+  $("g_save").disabled=false;$("g_save").textContent="Save";
+};
+
+function fillCf(){
+  const sel=$("g_cf"),cur=sel.value,names=[...new Set(cars.map(c=>c.client||"").filter(Boolean))].sort();
+  sel.innerHTML="";const o0=document.createElement("option");o0.value="";o0.textContent="All customers";sel.appendChild(o0);
+  names.forEach(n=>{const o=document.createElement("option");o.value=n;o.textContent=n;sel.appendChild(o)});
+  sel.value=names.includes(cur)?cur:"";
+  const dl=$("g_clients");dl.innerHTML="";names.forEach(n=>{const o=document.createElement("option");o.value=n;dl.appendChild(o)});
+}
+const dataUrl=async id=>{const b=await (await fetch("/_blob/"+id)).blob();return await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)})};
+async function makePdf(){
+  if(!window.jspdf||!window.deliverFile){alert("PDF tool did not load. Check your connection.");return}
+  const l=list().sort((a,b)=>(b.date||"").localeCompare(a.date||"")||b.created-a.created);if(!l.length)return;
+  const cf=$("g_cf").value,btn=$("g_pdf");btn.disabled=true;btn.textContent="Making PDF…";
+  try{
+    const doc=new window.jspdf.jsPDF({unit:"pt",format:"letter"}),W=612,M=40,cw=168,gap=14,ih=Math.round(cw*834/600),rowH=ih+54;
+    let y=M+22;
+    doc.setFont("helvetica","bold");doc.setFontSize(24);doc.text("October Detailing",M,y);
+    doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(110);doc.text("541-223-6444  |  octoberdetailing@gmail.com  |  octoberdetailing.com",M,y+16);
+    doc.setDrawColor(200);doc.line(M,y+26,W-M,y+26);
+    doc.setTextColor(0);doc.setFont("helvetica","bold");doc.setFontSize(15);doc.text(cf?"Cars detailed for "+cf:"Cars detailed",M,y+50);
+    const total=l.reduce((t,c)=>t+(+c.price||0),0);
+    doc.setFont("helvetica","normal");doc.setFontSize(11);doc.setTextColor(90);doc.text(l.length+" cars  ·  total "+money(total),M,y+66);
+    y+=88;let col=0,row=0,top=y;
+    for(const c of l){
+      if(row===2){doc.addPage();top=M;row=0}
+      const x=M+col*(cw+gap),yy=top+row*rowH;
+      try{doc.addImage(await dataUrl(c.img),"JPEG",x,yy,cw,ih)}catch(e){}
+      doc.setTextColor(0);doc.setFont("helvetica","bold");doc.setFontSize(10);doc.text(doc.splitTextToSize(label(c),cw)[0],x,yy+ih+14);
+      doc.setFont("helvetica","normal");doc.setFontSize(9);doc.setTextColor(100);doc.text((c.date?nd(c.date):"")+(c.client&&!cf?"  ·  "+c.client:""),x,yy+ih+27);
+      doc.setTextColor(0);doc.setFont("helvetica","bold");doc.setFontSize(11);doc.text(money(c.price),x,yy+ih+42);
+      if(++col===3){col=0;row++}
+    }
+    window.deliverFile(doc.output("blob"),"October-Detailing-"+(cf||"All").replace(/[^a-z0-9]+/gi,"_")+".pdf");
+  }catch(e){alert("Couldn’t make the PDF.")}
+  btn.disabled=false;btn.textContent="PDF";
+}
+const nd=s=>{const p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})};
+async function syncJob(job,file){
+  if(!db||!canEdit)return "noedit";
+  const ex=cars.find(c=>c.jobId===job.id);
+  let img=ex?ex.img:null,full=ex?ex.full:null;
+  if(file){
+    if(!assets)return "noedit";
+    const i=await loadImg(file),c=document.createElement("canvas");c.width=600;c.height=834;const x=c.getContext("2d");
+    x.fillStyle="#04060b";x.fillRect(0,0,600,834);
+    const portrait=i.height/i.width>=1.2,s=portrait?Math.max(600/i.width,834/i.height):Math.min(600/i.width,834/i.height);
+    x.drawImage(i,(600-i.width*s)/2,(834-i.height*s)/2,i.width*s,i.height*s);
+    const b1=await new Promise(r=>c.toBlob(r,"image/jpeg",.9));img=(await assets.upload(b1)).id;
+    const k=Math.min(1,1600/Math.max(i.width,i.height)),f=document.createElement("canvas");f.width=Math.round(i.width*k);f.height=Math.round(i.height*k);f.getContext("2d").drawImage(i,0,0,f.width,f.height);
+    const b2=await new Promise(r=>f.toBlob(r,"image/jpeg",.88));full=(await assets.upload(b2)).id;
+  }
+  if(!img)return "nophoto";
+  const data={name:job.car,year:"",price:job.price,notes:job.svc,date:job.date,jobId:job.id,client:job.cust,img,full};
+  if(ex)await db.collection("cars").doc(ex.id).update(data);else await db.collection("cars").add({...data,created:Date.now()});
+  return "ok";
+}
+window.galSync=syncJob;
+window.galDelete=async function(jobId){if(!db||!canEdit)return;for(const c of cars.filter(c=>c.jobId===jobId)){try{await db.collection("cars").doc(c.id).delete()}catch(e){}}};
+(async()=>{
+  try{
+    const user=await claude.use("user");
+    db=await claude.use("db");assets=await claude.use("assets");sampleFn=await claude.use("sample");
+    canEdit=!!(user&&user.canEdit()&&db&&assets);$("g_add").hidden=!canEdit;renderFor();
+    if(!db){$("g_empty").hidden=false;$("g_empty").textContent="Sign in to Claude to see the cars.";return}
+    db.collection("cars").onSnapshot(s=>{cars=s.docs.map(d=>({id:d.id,...d.data()}));render()},()=>{});
+    db.doc("settings/album").onSnapshot(s=>{const d=s.data();client=(d&&d.client)||"";renderFor()},()=>{});
+  }catch(e){$("g_empty").hidden=false;$("g_empty").textContent="Couldn’t load the cars."}
+})();
+render();
+
+})();
+</script>
+</body>
+</html>
